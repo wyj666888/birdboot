@@ -1,6 +1,5 @@
 package com.birdboot.core;
 
-import com.sun.javafx.iio.common.SmoothMinifier;
 
 import java.io.IOException;
 import java.net.ServerSocket;

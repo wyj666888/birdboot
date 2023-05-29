@@ -3,6 +3,9 @@ package com.birdboot.core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 项目主启动类
  */
@@ -18,7 +21,7 @@ public class ClientHandler implements Runnable {
         //测试:读取来自浏览器发过来的内容
         //HTTP协议要求:在没有附件的情况下,浏览器发送来的全是文字,单字节文字(英文，数字，符号)
         try {
-            String line = this.read();
+            String line = this.readLine();
             System.out.println("请求行:"+line);
 
             //请求行相关信息
@@ -36,17 +39,24 @@ public class ClientHandler implements Runnable {
             System.out.println("uri:"+uri);//uri:/index.html
             System.out.println("protocol:"+protocol);//protocol:HTTP/1.1
 
+            Map<String,String> headers = new HashMap<>();
 
-            System.out.print("消息头:");
-            for (int i=0;i<100;i++){
-                System.out.println(this.read());
+            while (true){
+                line = readLine();
+                if (line.isEmpty()){
+                    break;
+                }
+                System.out.println("消息头:"+line);
+                data = readLine().split(":\\s");
+                headers.put(data[0],data[1]);
             }
+            System.out.println("headers:"+headers);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public String read() throws IOException {
+    public String readLine() throws IOException {
         InputStream in = socket.getInputStream();
         char pre='a',cur='a';//pre表示上次读取的字符,cur表示本次读取的字符
         StringBuilder builder = new StringBuilder();//记录已读取的一行字符串的内容

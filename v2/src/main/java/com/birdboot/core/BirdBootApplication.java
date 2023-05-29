@@ -1,11 +1,12 @@
 package com.birdboot.core;
 
-import com.sun.javafx.iio.common.SmoothMinifier;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * 项目主启动类
+ */
 public class BirdBootApplication {
     private ServerSocket serverSocket;
 
@@ -21,15 +22,17 @@ public class BirdBootApplication {
 
     public void start(){
         try {
-//            while (true) {
-                System.out.println("等待客户端连接...");
-                Socket socket = serverSocket.accept();
-                System.out.println("一个客户连接了!!!");
-                //启动线程来处理该客户交互
-                ClientHandler handler = new ClientHandler(socket);
-                Thread t = new Thread(handler);
-                t.start();
-//            }
+
+            System.out.println("等待客户端连接...");
+            Socket socket = serverSocket.accept();
+            System.out.println("一个客户端连接了");
+            //启动线程来处理该客户端交互
+            ClientHandler handler = new ClientHandler(socket);
+            //1:这里要传参 2:如果编译报错说明ClientHandler没有实现Runnable接口
+            Thread t = new Thread(handler);
+            t.start();
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -40,3 +43,6 @@ public class BirdBootApplication {
         application.start();
     }
 }
+
+
+

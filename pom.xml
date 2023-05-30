@@ -12,6 +12,7 @@
         <module>V1</module>
         <module>v2</module>
         <module>V3</module>
+        <module>V4</module>
     </modules>
     <properties>
         <!-- 设置 JDK 版本为 1.8 -->

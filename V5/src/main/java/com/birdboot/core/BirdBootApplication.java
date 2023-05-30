@@ -20,7 +20,8 @@ public class BirdBootApplication {
 
     public void start(){
         try {
-//            while (true) {
+            //一问一答实现后,可以循环接受客户端的多次请求了
+            while (true) {
                 System.out.println("等待客户端连接...");
                 Socket socket = serverSocket.accept();
                 System.out.println("一个客户连接了!!!");
@@ -28,7 +29,7 @@ public class BirdBootApplication {
                 ClientHandler handler = new ClientHandler(socket);
                 Thread t = new Thread(handler);
                 t.start();
-//            }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

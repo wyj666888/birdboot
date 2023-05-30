@@ -36,7 +36,7 @@ public class HttpServletRequest {
 
         String[] data = line.split("\\s");
         method = data[0];
-        uri = data[1];
+        uri = data[1].substring(1);
         protocol = data[2];
 
         System.out.println("method:"+method);//method:GET
@@ -45,13 +45,14 @@ public class HttpServletRequest {
     }
     //解析消息头
     private void parseHeaders() throws IOException {
-        while (true){
+        while(true) {//while循环是因为浏览器发送多少个消息头不确定
             String line = readLine();
-            if (line.isEmpty()){
-                break;
+            if(line.isEmpty()){//如果readLine返回空字符串，说明单独读取了回车+换行
+                break;//因为单独的回车+换行表示消息头部分发送完毕
             }
-            System.out.println("消息头:"+line);
-            String[] data = readLine().split(":\\s");
+            System.out.println("消息头:" + line);
+            //将消息头按照冒号空格拆分为消息头名字和值并以key,value形式保存到headers中
+            String[] data = line.split(":\\s");
             headers.put(data[0],data[1]);
         }
         System.out.println("headers:"+headers);

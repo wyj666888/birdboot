@@ -29,13 +29,24 @@ public class HttpServletResponse {
     public void response() throws IOException {
         //3发送响应
         //1发送状态行
-        println("HTTP/1.1"+" "+statusCode+" "+statusReason);
+        sendStatusLine();
         //2发送响应头
+        sendHeaders();
+        //3发送响应正文
+        sendContent();
+    }
+    //1发送状态行
+    private void sendStatusLine() throws IOException {
+        println("HTTP/1.1"+" "+statusCode+" "+statusReason);
+    }
+    //2发送响应头
+    private void sendHeaders() throws IOException {
         println("Content-Type: text/html");
         println("Content-Length: " + contentFile.length());
         println("");//用空串单独发回车+换行
-
-        //3发送响应正文
+    }
+    //发送响应正文
+    private void sendContent() throws IOException {
         OutputStream out = socket.getOutputStream();
         FileInputStream fis = new FileInputStream(contentFile);
         int len = 0;
@@ -44,6 +55,7 @@ public class HttpServletResponse {
             out.write(buf,0,len);
         }
     }
+
     public void println(String line) throws IOException {
         OutputStream out = socket.getOutputStream();
         byte[] data = line.getBytes(StandardCharsets.ISO_8859_1);

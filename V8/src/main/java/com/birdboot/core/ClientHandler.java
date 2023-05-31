@@ -31,29 +31,11 @@ public class ClientHandler implements Runnable{
             HttpServletRequest request = new HttpServletRequest(socket);
             HttpServletResponse response = new HttpServletResponse(socket);
             //2处理请求
-            String path = request.getUri();
-            System.out.println("请求路径:"+path);
-            File baseDir = new File(
-                    ClientHandler.class.getClassLoader().getResource(".").toURI()
-            );
-            //定位类加载路径中的static目录
-            File staticDir = new File(baseDir,"static");
-
-            File file = new File(staticDir,path);
-
-            if(file.isFile()){
-                response.setStatusCode(200);
-                response.setStatusReason("OK");
-                response.setContentFile(file);
-            }else{
-                response.setStatusCode(404);
-                response.setStatusReason("NotFound");
-                response.setContentFile(new File(staticDir,"404.html"));
-            }
+            DispatcherServlet.getInstance().service(request,response);
             //3发送请求
             response.response();
 
-        } catch (IOException |URISyntaxException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {

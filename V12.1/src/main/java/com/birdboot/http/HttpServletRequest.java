@@ -1,6 +1,5 @@
 package com.birdboot.http;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
@@ -19,6 +18,23 @@ public class HttpServletRequest {
     private String uri;//抽象路径
     private String protocol;//协议版本
     private Map<String,String> headers = new HashMap<>();
+    /*
+        V12新增内容
+        例如:
+        uri--->/regUser?username=fancq&password=123456&nickname=chuanqi&age=22
+        新添加的三个属性最终应当保存的信息如下
+        requestURI:/regUser
+        queryString:username=fancq&password=123456&nickname=chuanqi&age=22
+        parameters:
+            key             value
+          username          fancq
+          password          123456
+          nickname          chuanqi
+          age               22
+     */
+    private String requestURI;//保存uri中"?"左侧的请求部分
+    private String queryString;//保存uri中"?"右侧的参数部分
+    private Map<String,String> parameters = new HashMap<>();//保存每一组参数
 
     public HttpServletRequest(Socket socket) throws IOException, EmptyRequestException {
         this.socket = socket;
@@ -37,7 +53,7 @@ public class HttpServletRequest {
             throw new EmptyRequestException();
         }
 
-        System.out.println("请求行:"+line);
+        System.out.println("请求行!!!!!!!!!!!!!!!!!!!!!!!:"+line);
 
         String[] data = line.split("\\s");
         method = data[0];
@@ -46,8 +62,30 @@ public class HttpServletRequest {
 
         System.out.println("method:"+method);//method:GET
         System.out.println("uri:"+uri);//uri:/index.html
+        //进一步解析Uri
+        parseURI(uri);
+
         System.out.println("protocol:"+protocol);//protocol:HTTP/1.1
     }
+    //进一步解析uri
+    private void parseURI(String uri){
+        int index = uri.indexOf('?');
+        if (index == -1) { // URI中不含参数
+            requestURI = uri;
+        } else { // URI中含有参数
+            requestURI = uri.substring(0, index);
+            queryString = uri.substring(index + 1);
+            String[] paramPairs = queryString.split("&");
+            for (String pair : paramPairs) {
+                String[] param = pair.split("=");
+                parameters.put(param[0],param.length==2?param[0]:"");
+            }
+        }
+        System.out.println("requestURI: " + requestURI);
+        System.out.println("queryString: " + queryString);
+        System.out.println("parameters: " + parameters);
+    }
+
     //解析消息头
     private void parseHeaders() throws IOException {
         while(true) {//while循环是因为浏览器发送多少个消息头不确定
@@ -102,5 +140,17 @@ public class HttpServletRequest {
     //根据消息头的名字获取对应的值,
     public String getHeader(String name) {
         return headers.get(name);
+    }
+
+    public String getRequestURI() {
+        return requestURI;
+    }
+
+    public String getQueryString() {
+        return queryString;
+    }
+
+    public String getParameter(String name) {
+        return parameters.get(name);
     }
 }

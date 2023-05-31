@@ -33,10 +33,21 @@ public class DispatcherServlet {
             response.setStatusCode(200);
             response.setStatusReason("OK");
             response.setContentFile(file);
+
+            response.addHeader("Content-Type","text/html");
+            response.addHeader("Content-Length",file.length()+"");
+            response.addHeader("Server","BirdWebServer");
+
         }else{
+
             response.setStatusCode(404);
             response.setStatusReason("NotFound");
-            response.setContentFile(new File(staticDir,"404.html"));
+            file = new File(staticDir,"404.html");
+            response.setContentFile(file);
+
+            response.addHeader("Content-Type","text/html");
+            response.addHeader("Content-Length",file.length()+"");
+            response.addHeader("Server","BirdWebServer");
         }
     }
     public static DispatcherServlet getInstance(){

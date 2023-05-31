@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class HttpServletResponse {
     private Socket socket;
@@ -14,6 +17,9 @@ public class HttpServletResponse {
     private String statusReason;//状态描述
 
     //响应头相关信息
+    //key:响应头的名字,value:
+    private Map<String,String> headers = new HashMap<>();
+
 
     //响应正文相关信息
     private File contentFile;//正文对应的实体文件
@@ -41,8 +47,13 @@ public class HttpServletResponse {
     }
     //2发送响应头
     private void sendHeaders() throws IOException {
-        println("Content-Type: text/html");
-        println("Content-Length: " + contentFile.length());
+        //遍历headers将所有待发送的响应头发送给客户端
+        Set<Map.Entry<String,String>> entrySet = headers.entrySet();
+        for (Map.Entry<String,String> e : entrySet){
+            String key = e.getKey();
+            String value = e.getValue();
+            println(key+": "+value);
+        }
         println("");//用空串单独发回车+换行
     }
     //发送响应正文
@@ -88,4 +99,9 @@ public class HttpServletResponse {
     public void setContentFile(File contentFile) {
         this.contentFile = contentFile;
     }
+
+    public void addHeader(String name,String value){
+        headers.put(name,value);
+    }
+
 }

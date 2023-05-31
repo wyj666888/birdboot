@@ -12,8 +12,6 @@ public class DispatcherServlet {
     private static File staticDir;//类加载路径下的static目录
     private static DispatcherServlet instance = new DispatcherServlet();
     private DispatcherServlet(){}
-
-
     static{
         try {
             baseDir = new File(
@@ -33,20 +31,13 @@ public class DispatcherServlet {
             response.setStatusCode(200);
             response.setStatusReason("OK");
             response.setContentFile(file);
-
-            response.addHeader("Content-Type","text/html");
-            response.addHeader("Content-Length",file.length()+"");
             response.addHeader("Server","BirdWebServer");
 
         }else{
-
             response.setStatusCode(404);
             response.setStatusReason("NotFound");
             file = new File(staticDir,"404.html");
             response.setContentFile(file);
-
-            response.addHeader("Content-Type","text/html");
-            response.addHeader("Content-Length",file.length()+"");
             response.addHeader("Server","BirdWebServer");
         }
     }

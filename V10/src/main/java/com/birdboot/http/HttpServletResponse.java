@@ -1,5 +1,6 @@
 package com.birdboot.http;
 
+import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class HttpServletResponse {
+    private static MimetypesFileTypeMap mftm = new MimetypesFileTypeMap();
     private Socket socket;
     //状态行相关信息
     private int statusCode;//状态代码
@@ -98,6 +100,8 @@ public class HttpServletResponse {
 
     public void setContentFile(File contentFile) {
         this.contentFile = contentFile;
+        addHeader("Content-Type",mftm.getContentType(contentFile));
+        addHeader("Content-Length",contentFile.length()+"");
     }
 
     public void addHeader(String name,String value){

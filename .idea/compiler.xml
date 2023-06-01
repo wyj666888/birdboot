@@ -9,6 +9,7 @@
         <module name="V12.1" />
         <module name="V14" />
         <module name="V13" />
+        <module name="V16" />
         <module name="V15" />
         <module name="V11" />
       </profile>

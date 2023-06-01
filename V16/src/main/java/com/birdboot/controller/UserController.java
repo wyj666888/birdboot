@@ -76,8 +76,9 @@ public class UserController {
 
         if (userFile.exists()) {
             try (FileInputStream fis = new FileInputStream(userFile);
-                 ObjectInputStream ois = new ObjectInputStream(fis)
+                 ObjectInputStream ois = new ObjectInputStream(fis);
             ) {
+
                 User user = (User) ois.readObject();
                 System.out.println(user);
 

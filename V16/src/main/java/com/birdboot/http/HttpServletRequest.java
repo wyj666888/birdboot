@@ -2,7 +2,9 @@ package com.birdboot.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
@@ -84,6 +86,12 @@ public class HttpServletRequest {
     }
     //解析
     private void parseParameters(String line){
+        //先对参数解码
+        try {
+            line = URLDecoder.decode(line,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         String[] paramPairs = line.split("&");
         for (String pair : paramPairs) {
             String[] param = pair.split("=",2);

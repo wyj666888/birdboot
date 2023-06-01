@@ -43,8 +43,8 @@ public class DispatcherServlet {
             UserController controller = new UserController();
             controller.reg(request,response);
         }else if ("/loginUser".equals(path)){
-//            UserController controller = new UserController();
-//            controller.login(request,response);
+            UserController controller = new UserController();
+            controller.login(request,response);
         }else {
             File file = new  File(staticDir, path);
             if (file.isFile()) {

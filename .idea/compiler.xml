@@ -12,6 +12,7 @@
         <module name="V15" />
         <module name="V18" />
         <module name="V17" />
+        <module name="V19" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

@@ -7,6 +7,7 @@ import com.birdboot.http.HttpServletRequest;
 import com.birdboot.http.HttpServletResponse;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 /**
@@ -43,39 +44,20 @@ public class DispatcherServlet {
         String path = request.getRequestURI();
         System.out.println("请求路径:" + path);
         //判断path里包不包含业务处理,有则给出对应响应,
-        try {
-            File dir = new File(DispatcherServlet.class.getClassLoader().getResource(".").toURI());
-            File controllerDir = new File(dir, "com/birdboot/controller");
-            File[] subs = controllerDir.listFiles(f -> f.getName().contains(".class"));
-            for (File sub : subs) {
-                int a = sub.getName().indexOf(".");
-                String className = sub.getName().substring(0, a);
-                //一个类的包名是指:代码编译后classes目录下开始到该类的上一级目录的路径为包名
-                Class cls = Class.forName("com.birdboot.controller." + className);
-                boolean mark = cls.isAnnotationPresent(Controller.class);
-                if (mark) {
-                    Method[] methods = cls.getDeclaredMethods();
-                    for (Method method : methods) {
-                        if (method.isAnnotationPresent(RequestMapping.class)) {
-                            RequestMapping arm = method.getAnnotation(RequestMapping.class);
-                            String value = arm.value();
-                            if (value.equals(path)) {
-                                //直到方法匹配对了,再实例化
-                                Object obj = cls.newInstance();
-                                //invoke()方法可以直接传参
-                                method.invoke(obj, request, response);
-                                //调用完方法后结束本方法
-                                return;
-                            }
-                        }
-                    }
-                }
+        Method method = HandlerMapping.getMethod(path);
+        if (method!=null){
+            try {
+                //根据当前方法对象获取该方法所属的对象
+                Class cls = method.getDeclaringClass();
+                method.invoke(cls.newInstance(), request, response);
+            } catch (Exception e) {
+                //处理业务如果出现异常,则应该给浏览器响应异常500,告知
+                response.setStatusCode(500);
+                response.setStatusReason("Internal Server Error");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        }else {
             //创建File(staticDir, path)对象,是staticDir下的path文件(这里指网页)
-            File file = new  File(staticDir, path);
+            File file = new File(staticDir, path);
             //判断文件是不是普通文件
             if (file.isFile()) {
                 //发送状态码200,response调用setStatusCode()方法
@@ -94,7 +76,7 @@ public class DispatcherServlet {
                 response.setContentFile(file);
                 response.addHeader("Server", "BirdWebServer");
             }
-
+        }
     }
     public static DispatcherServlet getInstance(){
         return instance;
